@@ -1,0 +1,118 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+#https://www.andreasnesheim.no/setting-up-ci-for-your-net-maui-android-app-in-azure-devops/
+
+trigger:
+  branches:
+    include:
+      - '*'
+#- master
+
+pool:
+  vmImage: windows-2022
+
+variables:
+  SigningKey: $(Signing Key Password)
+
+steps:
+# - task: UseDotNet@2
+#   displayName: 'Use Net 6 SDK'
+#   inputs:
+#     version: 6.x
+#     includePreviewVersions: true
+#     performMultiLevelLookup: true
+
+# Script from https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script
+- task: DownloadSecureFile@1
+  displayName: Download DotNet Install script
+  name: dotnetScript
+  inputs:
+    secureFile: 'dotnet-install.ps1'
+
+- task: PowerShell@2
+  displayName: Install DotNet Preview
+  inputs:
+    filePath: $(dotnetScript.secureFilePath)
+    arguments: '-Channel 6.0.3xx -Quality preview -InstallDir "C:\Program Files\dotnet"'
+
+- task: CmdLine@2
+  displayName: Display .Net Sdks Installed
+  inputs:
+    #script: 'dotnet workload install maui'
+    script: 'dotnet --list-sdks '
+
+# - task: CmdLine@2
+#   displayName: Install Workload
+#   inputs:
+#     #script: 'dotnet workload install maui'
+#     script: 'dotnet workload update '
+
+
+#https://github.com/dotnet/maui/blob/main/.github/DEVELOPMENT.md#rc-1-branch
+#https://github.com/dotnet/maui/blob/release/6.0.3xx-rc2/.github/DEVELOPMENT.md
+# - task: CmdLine@2
+#   displayName: Install Workload
+#   inputs:
+#     #script: 'dotnet workload install maui'
+#     #script: 'dotnet workload install --include-previews maui-android '
+#     #script: 'dotnet workload restore GarageDoorOpener.App/GarageDoorOpener.App.sln'
+#     #script: 'dotnet workload install maui --from-rollback-file https://aka.ms/dotnet/maui/main.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-bd261ea4/nuget/v3/index.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-52e9452f-3/nuget/v3/index.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json --source https://api.nuget.org/v3/index.json'
+#     script: |
+#       dotnet workload install maui
+#       --from-rollback-file https://aka.ms/dotnet/maui/6.0.300/rc.2.json `
+#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-323bf2dd/nuget/v3/index.json `
+#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-572aeedc/nuget/v3/index.json `
+#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json `
+#       --source https://api.nuget.org/v3/index.json
+
+- task: PowerShell@2
+  displayName: Install Workload
+  inputs:
+    targetType: 'inline'
+    script: dotnet workload install maui 
+      # --from-rollback-file https://aka.ms/dotnet/maui/6.0.300/rc.2.json `
+      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-323bf2dd/nuget/v3/index.json `
+      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-572aeedc/nuget/v3/index.json `
+      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json `
+      # --source https://api.nuget.org/v3/index.json
+
+# for help with restore --> https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-restore
+- task: DotNetCoreCLI@2
+  displayName: Restore Solution
+  inputs:
+    command: 'restore'
+    projects: '**/*.sln'
+    feedsToUse: select
+    vstsFeed: '02a9c298-6696-4e61-ab8e-e09d4db9f2c9/ec301334-72ea-4451-a044-107a1363848d'
+    noCache: false
+
+- task: DotNetCoreCLI@2
+  displayName: Build Solution
+  inputs:
+    command: 'build'
+    projects: '**/GarageDoorOpener.App.sln'
+    arguments: '--no-restore -c Release -f net6.0-android'
+
+- task: AndroidSigning@3
+  displayName: Android Sign File
+  inputs:
+    apkFiles: '**/*.apk'
+    apksignerKeystoreFile: 'ManCaveOpener.keystore'
+    apksignerKeystorePassword: '$(SigningKey)'
+    apksignerKeystoreAlias: 'mancaveopener'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(agent.builddirectory)'
+    Contents: '**/*-Signed.aab'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

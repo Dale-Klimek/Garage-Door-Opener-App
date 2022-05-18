@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+//import "google/protobuf/wrappers.proto";
+
+//option csharp_namespace = "GarageDoorOpener";
+
+//package garage;
+
+//service GarageDoor{
+//    rpc OpenDoor (OpenDoorRequest) returns (OpenDoorReply);
+//}
+
+//message OpenDoorRequest{
+
+//}
+
+//message OpenDoorReply{
+//}

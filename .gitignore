@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/GarageDoorOpener.App/GarageDoorOpener.App/obj
+/GarageDoorOpener.App/GarageDoorOpener.App/bin
+/GarageDoorOpener.App/GarageDoorOpener.App/.vs
+/.vs
+/GarageDoorOpener.App/.vs
+/GarageDoorOpener.App/GarageDoorOpener.App/.vs
+/GarageDoorOpener.App/GarageDoorOpener.Shared/bin
+/GarageDoorOpener.App/GarageDoorOpener.Shared/obj
+*.user

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+//import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "GarageDoorOpener.Server.Protos";
+
+service GarageDoor{
+	rpc OpenDoor (OpenDoorRequest) returns (OpenDoorReply);
+}
+
+// Change this to signal instead of open because would could be closing
+message OpenDoorRequest{
+	oneof openDoor{
+		OpenLeftDoor openLeftDoor =2;
+		OpenRightDoor openRightDoor = 3;
+	}
+}
+
+message OpenLeftDoor{
+
+}
+
+message OpenRightDoor{
+
+}
+
+message OpenDoorReply{
+}

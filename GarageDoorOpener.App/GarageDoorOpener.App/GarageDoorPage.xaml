@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GarageDoorOpener.App.GarageDoorPage"
+             xmlns:self="clr-namespace:GarageDoorOpener.App"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             BackgroundColor="{DynamicResource SecondaryColor}"
+             >
+    <ContentPage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Setup" Order="Secondary" Clicked="ToolbarItem_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
+    </Shell.BackButtonBehavior>
+    <Grid>
+        <Grid x:Name="HorizontalGrid" VerticalOptions="FillAndExpand">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="1">
+                <Image BackgroundColor="{Binding LeftBackgroundColor, Mode=OneWay}"
+                       Source="garage_door_left.png"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       MaximumHeightRequest="300"
+                       MaximumWidthRequest="300"
+                       SemanticProperties.Description="Button to signal left door."
+                       Aspect="AspectFit"
+                       AbsoluteLayout.LayoutFlags="PositionProportional"
+                       AbsoluteLayout.LayoutBounds=".5, .5"
+                       />
+                <ActivityIndicator IsRunning="{Binding LeftDoorIsRunning}" HorizontalOptions="Center" VerticalOptions="Center" Scale="5"/>
+                <Button BackgroundColor="Transparent" IsEnabled="{Binding LeftDoorIsRunning, Converter={StaticResource InvertedBoolConverter}}"  Command="{Binding SignalLeftDoor}" CommandParameter="{Binding LeftDoorIsRunning}" BorderColor="Transparent"/>
+            </Grid>
+
+
+            <Grid Grid.Column="3">
+                <Image BackgroundColor="{Binding RightBackgroundColor, Mode=OneWay}"
+                        Source="garage_door_right.png"
+                        MaximumHeightRequest="300"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        MaximumWidthRequest="300"
+                        SemanticProperties.Description="Button to signal right door."
+                        Scale="1"/>
+                <ActivityIndicator IsRunning="{Binding RightDoorIsRunning}" HorizontalOptions="Center" VerticalOptions="Center" Scale="5"/>
+                <Button BackgroundColor="Transparent" IsEnabled="{Binding RightDoorIsRunning, Converter={StaticResource InvertedBoolConverter}}" Command="{Binding SignalRightDoor}" CommandParameter="{Binding RightDoorIsRunning}" BorderColor="Transparent" />
+            </Grid>
+            
+        </Grid>
+        <Grid x:Name="VerticalGrid" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Image BackgroundColor="{Binding LeftBackgroundColor, Mode=OneWay}"
+                       Source="garage_door_left.png"
+                       IsEnabled="False"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       MaximumWidthRequest="300"
+                       MaximumHeightRequest="300"
+                       SemanticProperties.Description="Button to signal left door."
+                       Aspect="AspectFit"
+                       />
+                <ActivityIndicator IsRunning="{Binding LeftDoorIsRunning}" HorizontalOptions="Center" VerticalOptions="Center" Scale="5"/>
+                <Button BackgroundColor="Transparent" IsEnabled="{Binding LeftDoorIsRunning, Converter={StaticResource InvertedBoolConverter}}" Command="{Binding SignalLeftDoor}" CommandParameter="{Binding LeftDoorIsRunning}" BorderColor="Transparent"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Image BackgroundColor="{Binding RightBackgroundColor, Mode=OneWay}"
+                       Source="garage_door_right.png"
+                       IsEnabled="False"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       MaximumHeightRequest="300"
+                       MaximumWidthRequest="300"
+                       SemanticProperties.Description="Button to signal right door."
+                       Scale="1"/>
+                <ActivityIndicator IsRunning="{Binding RightDoorIsRunning}" HorizontalOptions="Center" VerticalOptions="Center" Scale="5"/>
+                <Button BackgroundColor="Transparent" IsEnabled="{Binding RightDoorIsRunning, Converter={StaticResource InvertedBoolConverter}}" Command="{Binding SignalRightDoor}" CommandParameter="{Binding RightDoorIsRunning}" BorderColor="Transparent"/>
+            </Grid>
+        </Grid>
+    </Grid>
+    
+</ContentPage>
