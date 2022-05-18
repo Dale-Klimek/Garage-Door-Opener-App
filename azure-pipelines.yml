@@ -3,7 +3,6 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-#https://www.andreasnesheim.no/setting-up-ci-for-your-net-maui-android-app-in-azure-devops/
 
 trigger:
   branches:
@@ -18,12 +17,6 @@ variables:
   SigningKey: $(Signing Key Password)
 
 steps:
-# - task: UseDotNet@2
-#   displayName: 'Use Net 6 SDK'
-#   inputs:
-#     version: 6.x
-#     includePreviewVersions: true
-#     performMultiLevelLookup: true
 
 # Script from https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script
 - task: DownloadSecureFile@1
@@ -41,43 +34,13 @@ steps:
 - task: CmdLine@2
   displayName: Display .Net Sdks Installed
   inputs:
-    #script: 'dotnet workload install maui'
     script: 'dotnet --list-sdks '
-
-# - task: CmdLine@2
-#   displayName: Install Workload
-#   inputs:
-#     #script: 'dotnet workload install maui'
-#     script: 'dotnet workload update '
-
-
-#https://github.com/dotnet/maui/blob/main/.github/DEVELOPMENT.md#rc-1-branch
-#https://github.com/dotnet/maui/blob/release/6.0.3xx-rc2/.github/DEVELOPMENT.md
-# - task: CmdLine@2
-#   displayName: Install Workload
-#   inputs:
-#     #script: 'dotnet workload install maui'
-#     #script: 'dotnet workload install --include-previews maui-android '
-#     #script: 'dotnet workload restore GarageDoorOpener.App/GarageDoorOpener.App.sln'
-#     #script: 'dotnet workload install maui --from-rollback-file https://aka.ms/dotnet/maui/main.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-bd261ea4/nuget/v3/index.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-52e9452f-3/nuget/v3/index.json --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json --source https://api.nuget.org/v3/index.json'
-#     script: |
-#       dotnet workload install maui
-#       --from-rollback-file https://aka.ms/dotnet/maui/6.0.300/rc.2.json `
-#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-323bf2dd/nuget/v3/index.json `
-#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-572aeedc/nuget/v3/index.json `
-#       --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json `
-#       --source https://api.nuget.org/v3/index.json
 
 - task: PowerShell@2
   displayName: Install Workload
   inputs:
     targetType: 'inline'
     script: dotnet workload install maui 
-      # --from-rollback-file https://aka.ms/dotnet/maui/6.0.300/rc.2.json `
-      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-runtime-323bf2dd/nuget/v3/index.json `
-      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-emsdk-572aeedc/nuget/v3/index.json `
-      # --source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet6/nuget/v3/index.json `
-      # --source https://api.nuget.org/v3/index.json
 
 # for help with restore --> https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-restore
 - task: DotNetCoreCLI@2
